@@ -1,0 +1,100 @@
+{% extends 'appbuilder/baselayout.html' %}
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-sm-3">
+			<h4>Filters &nbsp;&nbsp;<small><button class="btn btn-sm btn-primary" 
+				name="search_btn"><i class="fa fa-search"></i></button></small></h4>
+			<form name="filter_form">
+			{% for tag in tags %}
+			<div class="list-group">
+				<li class="list-group-item active">
+					{{tag.tag_name}}
+				</li>
+				{% for value in tag.tag_value %}
+					<li class="list-group-item">
+						<div class="checkbox">
+						    <label>
+						      <input type="checkbox" name="tag_value" value="{{value}}" data-name="{{tag.tag_name}}"> {{value}}
+						    </label>
+  						</div>
+					</li>
+				{% endfor%}
+			</div>
+			
+			{% endfor %}
+			</form>
+		</div>
+		<div class="col-sm-9">
+			
+			<hr>
+			<div class="panel panel-primary">
+				<div class="panel-heading"><h4 class="panel-title">Data Sets</h4></div>
+			</div>
+			{% block list_search scoped %}
+		        {% call lib.accordion_tag("accordion1",_("Search"), False) %}
+		            {{ widgets.get('search')()|safe }}
+		        {% endcall %}
+    		{% endblock %}
+			<div>
+				<div class="well well-sm">
+					<a href="/data_set/add" class="btn btn-primary btn-sm" data-toggle="tooltip" rel="tooltip" data-original-title="Add a new record"><i class="fa fa-plus"></i></a>
+					<a href="/back" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Back">
+        				<i class="fa fa-arrow-left"></i>
+    				</a>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="col-md-1 col-lg-1 col-sm-1"></th>
+								<th>Name</th>
+								<th>Short Description</th>
+								<th>Data Owner</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for dataset in datasets %}
+								<tr>
+													<td><center><div class="btn-group btn-group-xs" style="display: flex;">
+				            
+				    <a href="/data_set/show/{{dataset.dataset_id}}" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" 
+				    title="" data-original-title="Show record">
+				        <i class="fa fa-search"></i>
+				    </a>
+				            
+				    <a href="/data_set/edit/{{dataset.dataset_id}}" class="btn btn-sm btn-default" data-toggle="tooltip" rel="tooltip" title="" data-original-title="Edit record">
+				        <i class="fa fa-edit"></i>
+				    </a>
+				            
+				    <a data-text="You sure you want to delete this item?" data-href="/data_set/delete/{{dataset.dataset_id}}" class="btn btn-sm btn-default confirm" rel="tooltip" title="" data-toggle="modal" data-target="#modal-confirm" href="#" data-original-title="Delete record">
+				        <i class="fa fa-eraser"></i>
+				    </a>
+
+				    </div></center></td>
+									<td><a href="/data_set/show/{{dataset.dataset_id}}">{{dataset.dataset_name}}</a></td>
+									<td>{{dataset.dataset_short_description}}</td>
+									<td><a href="/data_source_owner/show/{{dataset.data_source_owner.data_source_owner_id}}">{{dataset.data_source_owner}}</a></td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block tail_js %}
+	{{super()}}
+	<script type="text/javascript">
+		$("[name=search_btn]").click(function(e){
+			tag_values_ = $('[name=tag_value]:checked').map(function(e){
+					return this.dataset.name+"-"+this.value;
+				}).get();
+			window.location = "/data_set_custom/?f="+tag_values_;
+			//$("[name=filter_form]").submit();
+		});
+	</script>
+{% endblock %}

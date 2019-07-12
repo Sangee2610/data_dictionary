@@ -1,0 +1,349 @@
+{% extends "appbuilder/base.html" %}
+{% import 'appbuilder/general/lib.html' as lib %}
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/style.css')}}">
+<link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/dashboard_new.css')}}">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+{% endblock %}
+{% set menu = appbuilder.menu %}
+
+{% block navbar %}
+<div class="container-fluid dashboard">
+    <nav class="navbar navbar-default">
+        <div class="header-nav">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><img src="/static/images/logo.png"/></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a>Data Dictionary<span class="sr-only">(current)</span></a></li>
+                    <!-- <li><a href="#">My Datasets<span class="sr-only">(current)</span></a></li> -->
+                    {% include '/appbuilder/navbar_menu.html' %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right login">
+                    {% include '/appbuilder/navbar_right.html' %}
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- <div class="container-fluid dashboard">
+    <section class="row" ng-controller="dashBoardCtrl"> 
+        <div class="col-md-12"> -->
+            <aside class="col-md-2 filter">
+				<h4>Filter
+				<button class="btn clearall" id="clearall">Clear all</button>				
+			    </h4>
+				{% for tag in tags %}
+                <div class="panel">
+                    <div class="panel-heading">{{tag.tag_name}} <i class="pull-right fa fa-angle-up" aria-hidden="true"></i> <i class="pull-right fa fa-angle-down" aria-hidden="true"></i></div>
+                    <ul class="list-group">
+                        {% for value in tag.tag_value %}
+                        <li class="list-group-item">
+                            <div class="checkboxWrap">
+                                 <input type="checkbox" name="tag_value" value="{{value.tag_value_id}}"> {{value}}
+								<span class="checkmark"></span>
+                            </div>
+                        </li>
+                        {% endfor%}
+					</ul>
+					<div class="collapseBox">
+						{{tag.tag_value[0]}}, {{tag.tag_value[1]}} 
+						{% if tag.tag_value | length > 2%}
+						
+						+ {{tag.tag_value | length - 2}} more
+					   
+						{% endif %}
+					 </div>
+                </div>
+                {% endfor %}
+
+            </aside>
+            <section class="col-md-10 mainSection">
+                <!-- <div class="row searchWrap">
+                    <span class="glyphicon glyphicon-search"></span>
+                    <input type="text" class="form-control" id="search_form" placeholder="Search data dictionary">
+                </div>
+                <section class="row alphabets">
+                    <div class="col-md-12">
+                     <p>{% for s in 'abcdefghijklmnopqrstuvwxyz' %}<a href="#" class="atoz_search">{{s}}</a>{% endfor %}</p>
+                    </div>
+                </section> -->
+                <section class="datatable">
+                    <header class="row">
+                        <div class="col-md-6">
+                            <h4>Search Results</h4>
+                        </div>
+                        <div class="col-md-6 text-right">
+							<div id="userRole" class="hide">{{current_user.roles}}</div> <!--just to hiding edit and delete fucntion-->
+                            {% if 'Admin' in current_user.roles|safe or 'Editor' in current_user.roles|safe %}
+                            <a class="btn btn-getAdvice" href="/data_set/add">Add dataset</a>
+                            {% endif %}
+                            <!-- <a class="btn btn-getAdvice" href="/get_advice/dataset">{% trans %} Get Advice {% endtrans %}</a>
+                            <button class="btn btn-default" id="download"><img src="/static/images/Download.png" /></button> -->
+                        </div>
+                    </header>
+                    <section class="table-data">
+                        <header class="row">
+                            <ul class="rowData">
+                                <li class="col-md-2">
+                                    <div class="checkboxWrap"><strong>Dataset Name</strong>
+                                        <!-- <input type="checkbox" id="checkbox_all">   
+										<span class="checkmark"></span> -->
+                                    </div>
+                                </li>
+                                <li class="col-md-3">Description</li>
+                                <li class="col-md-3">Tags</li>
+                                <li class="col-md-2">Schema</li>
+                                <li class="col-md-2">Location</li>
+                                <!-- <li class="col-md-1">Row Count</li> -->
+                            </ul>
+                        </header>
+                        <div id="datasets">
+                        {% for dataset in datasets %}
+                         {% if dataset %}
+						   <div class="row dataSection">
+						    <ul class="rowData">
+						        <li class="col-md-2">
+						            <div class="checkboxWrap">
+						                    <!-- <input type="checkbox" class="checkbox_dataset" 
+											value="{{dataset.dataset_id}}">  -->
+											{{dataset.dataset_name}}
+											<!-- <span class="checkmark"></span> -->
+						            </div>
+
+
+
+						        </li>
+						        <li class="col-md-3 hideContent">
+									{{dataset.dataset_description|safe}}
+								</li>
+							
+						        <li class="col-md-3">&nbsp;
+						        	{{dataset.tags|join(', ')}}
+						        	&nbsp;
+						        </li>
+						        <li class="col-md-2">{{dataset.dataset_schema}}</li>
+						        <li class="col-md-2">{{dataset.storage_location}}</li>
+								<!-- <li class="col-md-1">{{dataset.row_count}}</li> -->
+								<!-- <span href="#" class="fa fa-ellipsis-v editDataset" aria-hidden="true"></span> -->
+								<!-- <span class="dropdown editDataset">
+										<a class="dropdown-toggle fa fa-ellipsis-v" data-toggle="dropdown" href="javascript:void(0)" data-original-title="" title="" aria-expanded="true">
+										Tag<b class="caret"></b></a>
+										<ul class="dropdown-menu">
+											<li>
+												<a tabindex="-1" href="/tagview/list/" data-original-title="" title="">
+												Tag</a>
+											</li>
+									 </ul> -->
+								<!-- <li class="col-md-1">
+									
+								</li> -->
+								<!-- <span class="highlighter"> -->
+									<!-- <i class="fa fa-ellipsis-v" aria-hidden="true"></i> -->
+									<!-- <span class="fa fa-chevron-right"></span> -->
+								<!-- </span> -->
+								<div class="dropdown editDatasetWrap">
+										<a href="javascript:void(0)" class="dropdown-toggle editDataset" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<span class="editDatasetDot"></span>
+										<span class="editDatasetDot"></span>
+										<span class="editDatasetDot"></span>
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+										  {% if 'Admin' in current_user.roles|safe or 'Editor' in current_user.roles|safe %}
+										  <li><a href="/data_set/edit/{{dataset.dataset_id}}" class="dropdownItem">Edit dataset</a></li>
+										  {% endif %}
+										  {% if 'Admin' in current_user.roles|safe and not dataset.approved %}
+
+										  <li><a href="/data_set/approve/{{dataset.dataset_id}}" class="dropdownItem">Approve</a></li>
+										  {% endif %}
+										  <li><a href="/get_advice/dataset" class="dropdownItem">Ask a question</a></li>
+										  <li><a href="javascript:void(0);" id="download" class="dropdownItem" onclick="downloadDataset('{{dataset.dataset_id}}')">Download</a></li>
+										  {% if 'Admin' in current_user.roles|safe or 'Editor' in current_user.roles|safe %} 
+										  <li><a href="/data_set/delete/{{dataset.dataset_id}}" class="dropdownItem">Delete</a></li>
+										  {% endif %}		
+										</ul>
+								</div>
+								
+							</ul>
+							<ul>
+						                <li>
+											{% if dataset.created_on|is_newly_added_dataset %}
+						                    <button class="btn btn-new">new</button>
+											{% endif %}
+						                    <button class="btn btn-new">{{ dataset.noofdays}}</button>
+											{% if not dataset.approved %}
+										    <button class="btn btn-new">Unapproved</button>
+											{% endif %}
+
+						                </li>
+						            </ul>
+							<div class="show-more"><a href="#">Show more</a></div>
+						    <section class="col-md-12 details-view">
+						        <ul class="nav nav-pills">
+						            <li class="col-md-2 active" role="presentation"><a href="#metaData{{dataset.dataset_id}}" data-toggle="tab">Meta data</a></li>
+						            <li class="col-md-2" role="presentation"><a href="#columns{{dataset.dataset_id}}" data-toggle="tab">Columns({{dataset.columns|length}})</a></li>
+						            <li class="col-md-2" role="presentation"><a href="#tagList{{dataset.dataset_id}}" data-toggle="tab">Tags List({{dataset.tags|length}})</a></li>
+						            <li class="col-md-2" role="presentation"><a href="#attachments{{dataset.dataset_id}}" data-toggle="tab">Attachments({{dataset.attachments|length}})</a></li>
+
+						        </ul>
+						        <div class="tab-content clearfix">
+						            <div class="tab-pane metaData active" id="metaData{{dataset.dataset_id}}">
+						                <ul>
+						                    <li class="col-md-5">
+						                        <label>Primary Key</label>
+						                        <span>{{dataset.primary_key}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>History help since</label>
+						                        <span>{{dataset.history_held_since}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Data Supplier</label>
+						                        <span>{{dataset.data_supplier}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Last modified by</label>
+						                        <span>{{dataset.changed_by}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Position</label>
+						                        <span>{{dataset.position}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Last modified date</label>
+						                        <span>{{dataset.changed_on}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Owner</label>
+						                        <span>{{dataset.data_source_owner}}</span>
+						                    </li>
+						                    <li class="col-md-5">
+						                        <label>Creation date</label>
+						                        <span>{{dataset.created_on}}</span>
+						                    </li>
+						                </ul>
+						                <div class="panel panel-default">
+						                    <h6>Project using it</h6>
+						                    <div class="panel-body">
+						                        {{dataset.projects_using_this|safe}}
+						                    </div>
+						                </div>
+						            </div>
+						            <div class="tab-pane" id="columns{{dataset.dataset_id}}">
+						                <table class="table">
+						                    <thead>
+						                    <tr>
+						                        <th class="col-md-2">Column name</th>
+						                        <th class="col-md-4">Description</th>
+						                        <th class="col-md-2">Data Type</th>
+						                        <th class="col-md-2">Count of unique values</th>
+						                        <th class="col-md-2">Count of null values</th>
+						                    </tr>
+						                    </thead>
+						                    <tbody>
+						                    	{% for col in dataset.columns %}
+								                    <tr>
+								                        <td>{{col.column_name}}</td>
+								                        <td>{{col.attribute_description|safe}}</td>
+								                        <td>{{col.datatype}}</td>
+								                        <td>{{col.count_of_unique_values}}</td>
+								                        <td>{{col.count_of_null_values}}</td>
+								                    </tr>
+						                    	{% endfor %}
+						                    </tbody>
+										</table>
+										{% if dataset.columns | length > 0 %}
+										<a href="#" class="showAll">Show all</a>
+										{% else %}
+										<p class="columnZero">Column information is missing for this dataset</p>
+										{% endif %}
+						            </div>
+
+						            <div class="tab-pane" id="tagList{{dataset.dataset_id}}">
+						                <table class="table">
+						                    <thead>
+						                    <tr>
+						                        <th class="col-md-2">Tag name</th>
+						                        <th class="col-md-10">Tag value</th>
+						                    </tr>
+						                    </thead>
+						                    <tbody>
+						                   {% for tag in dataset.tags_list %}
+						                    <tr>
+						                        <td>{{tag.tag_name}}</td>
+						                        <td>
+						                          {% for tv in tag.tag_values %} {% if tv %} {{tv}} {% endif %} {% endfor %}
+						                     	</td>
+						                    </tr>
+						                   {% endfor %}
+						                    </tbody>
+						                </table>
+						            </div>
+						            <div class="tab-pane attachments" id="attachments{{dataset.dataset_id}}">
+										{% if dataset.attachments | length == 0 %}
+											<p class="columnZero">There are no attachments available.</p>
+										{% else %}
+										<ul>
+						                	{% for attachment in dataset.attachments %}
+						                    <li>
+						                        <span class="glyphicon glyphicon-paperclip"></span> 
+						                        <a href="{{url_for('DataSetAttachmentView.download', filename=attachment.file)}}"> {{attachment.file}}</a>
+						                    </li>
+						                   {% endfor %}
+						                </ul>
+										{% endif %}
+						            </div>
+						        </div>
+						    </section>
+						</div>
+						{% endif %}
+                        {% endfor %}
+                    </div>
+
+                    </section>
+				</section>
+			</section>
+      <!--  </div>
+	 </section>
+</div> -->
+{% endblock %}
+
+{% block tail_js %}
+{{super()}}
+<script>
+      $(document).ready(function() {
+	     	$('.rowData').on('click', function(e){
+			if(e.target.className.indexOf('editDataset') !== -1 || e.target.className.indexOf('dropdownItem') !== -1 ) return;
+			  if($(this).parent().hasClass('active')){
+				 $(this).parent().find('.details-view').slideUp(); 
+			 	 $(this).parent().removeClass('active'); 
+			 return; 
+			 }else{
+				$(this).parent().find('.details-view').slideDown();
+				$(this).parent().addClass('active');
+				$(this).parent().siblings().find('.details-view').slideUp(); 
+				$(this).parent().siblings().removeClass('active');
+			 }
+			  
+		  });
+		  
+		
+      });
+</script>
+<script src="{{url_for('static',filename='scripts/dashboard.js')}}"></script>
+{% endblock %}

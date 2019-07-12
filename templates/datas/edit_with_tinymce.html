@@ -1,0 +1,26 @@
+{% extends "appbuilder/general/model/edit.html" %}
+
+
+{% block tail_js %}
+	{{super()}}
+	<script src="{{ url_for('wtf_tinymce.static', filename='vendor/tinymce/js/tinymce/jquery.tinymce.min.js') }}"></script>
+    <script src="{{ url_for('wtf_tinymce.static', filename='vendor/tinymce/js/tinymce/tinymce.min.js') }}"></script>
+
+    <script type="text/javascript">
+    $(function() {
+      $('textarea').removeClass('richtext').tinymce({
+        
+        // Focus/blur indicators
+        menubar: false,
+        setup: function(ed) {
+          ed.on('focus', function(e) {
+            $(ed.editorContainer).addClass('active');
+          });
+          ed.on('blur', function(e) {
+            $(ed.editorContainer).removeClass('active');
+          });
+        }
+      });
+    });
+  </script>
+{% endblock %}

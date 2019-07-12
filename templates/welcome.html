@@ -1,0 +1,13 @@
+{% if current_user.new_user %}
+	{% include '/first_time_banner.html' %}
+{% else %}
+	{% extends "appbuilder/base.html" %}
+
+	{% block content %}
+		<div class="jumbotron">
+	    	<h1 class="text-center">Data Dictionary</h1>
+			    <p class="lead">&nbsp;</p>
+	  	 </div>
+	{% endblock %}
+
+{% endif %}

@@ -1,0 +1,69 @@
+{% extends "appbuilder/base.html" %}
+{% block head_css %}
+    {{ super() }}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/style.css')}}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/advice.css')}}">
+{% endblock %}
+
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% set menu = appbuilder.menu %}
+{% set languages = appbuilder.languages %}
+
+{% block navbar %}
+<div class="container-fluid getAdvice">
+	<nav class="row navbar navbar-default">
+        <div class="header-nav">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" 
+            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><img src="/static/images/logo.png" /></a>
+          </div>
+
+           <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            	<li><a>{{_("Data Dictionary")}}<span class="sr-only">(current)</span></a></li>
+                {% include '/appbuilder/navbar_menu.html' %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% include '/appbuilder/navbar_right.html' %}
+            </ul>
+        	</div>
+        </div><!-- /.container-fluid -->
+    </nav>
+ </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid getAdvice">
+	 <section class="row">
+            <header class="col-md-11 col-md-offset-1">
+                <h3>{{_("We are here to help you!")}}</h3>
+                <p>{{_("Please fill the fields below and we'll get back to you.")}}</p>
+            </header>
+        </section>
+        <section class="row advice-form">
+
+                <section class="col-md-5 center-block">
+                        <form method="post">
+                        	{{form.hidden_tag()}}
+                                <div class="form-group">
+                                	{{form.dataset(class="form-control")}}
+                                </div>
+                                <div class="form-group">
+                                	{{form.message(class="form-control", rows=5, placeholder="Type your message")}}
+                                </div>
+                                <button type="reset" class="btn btn-clear">Clear</button>
+                                <button type="submit" class="btn btn-getAdvice">Send</button>
+                        </form>
+                </section>
+        </section>
+</div>
+{% endblock %}

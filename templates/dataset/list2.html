@@ -1,0 +1,77 @@
+{% extends "appbuilder/base.html" %}
+{% import 'appbuilder/general/lib.html' as lib %}
+
+{% block content %}
+
+<div class="container">
+<div class="row">
+<div class="col-sm-3">
+		<h4>Filters &nbsp;&nbsp;<small><button class="btn btn-sm btn-primary" 
+			name="search_btn"><i class="fa fa-search"></i></button></small></h4>
+		<form name="filter_form">
+		{% for tag in tags %}
+		<div class="list-group">
+			<li class="list-group-item active">
+				{{tag.tag_name}}
+			</li>
+			{% for value in tag.tag_value %}
+				<li class="list-group-item">
+					<div class="checkbox">
+					    <label>
+					      <input type="checkbox" name="tag_value" value="{{value.tag_value_id}}" data-name="{{tag.tag_id}}"> {{value}}
+					    </label>
+					</div>
+				</li>
+			{% endfor%}
+		</div>
+		{% endfor %}
+		</form>
+	</div>
+<div class="col-sm-9">
+{{ lib.panel_begin(title) }}
+
+    {% block list_search scoped %}
+        {% call lib.accordion_tag("accordion1",_("Search"), False) %}
+            {{ widgets.get('search')()|safe }}
+        {% endcall %}
+    {% endblock %}
+    {% block list_list scoped %}
+        <div>
+        	{{ widgets.get('list')()|safe }}
+        </div>
+    {% endblock %}
+{{ lib.panel_end() }}
+</div>
+</div>
+</div>
+
+{% endblock %}
+
+
+{% block tail_js %}
+	{{super()}}
+	<script type="text/javascript">
+		$("[name=search_btn]").click(function(e){
+			tag_filters = []
+			tag_value_filters = []
+
+			tag_values_ = $('[name=tag_value]:checked').map(function(e){
+					
+					//return this.dataset.name+"-"+this.value;
+					return "_flt_0_tags_value="+this.value;
+				}).get();
+			window.location = "/data_set_custom/list?"+tag_values_.join("&");
+			//$("[name=filter_form]").submit();
+		});
+		$('.dataset-view').each(function(i, v){
+			var view = $(this);
+			$.get('/data_set_custom/get_dataset_view_count/'+this.dataset.pk, function(data){
+				view.html(" "+ data);
+			})
+	 	});
+	 	$('.dataset-fab').each(function(i, v){
+	 		var fab = $(this);
+	 		//$.get();
+	 	});
+	</script>
+{% endblock %}

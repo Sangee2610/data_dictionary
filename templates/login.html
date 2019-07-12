@@ -1,0 +1,40 @@
+{% extends "appbuilder/base.html" %}
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/login.css')}}">
+{% endblock %}
+
+{% block navbar %} {% endblock %}
+{% block content %}
+	<div class="container">
+	<div class="login-logo ">
+	   <img src="{{url_for('static',filename='images/DFS-Logo.png')}}" id="logo" alt="DFS" />	
+	</div>
+	<div class="wrapper">		 
+		  <div id="formContent">
+			<div class="">
+			   <h2>Login</h2>
+			</div>
+
+			<!-- Login Form -->
+			<form class="form" action="" method="post" name="login">
+			  {{form.hidden_tag()}}
+			  {{ form.username(size = 80, placeholder="Username") }}
+			  {{ form.password(size = 80, placeholder="Password") }}
+			 
+			  <!-- Remind Passowrd -->
+			  <div id="formFooter">
+			 
+				<!-- <div class="checkbox">
+					<label><input type="checkbox"> Remember me</label>
+				</div> -->
+				<a class="" href="/forgot_password/form">Forgot Password</a>
+			  </div>
+			  <input type="submit" class="btn btn-primary" value="Login">
+			</form>
+			<div class="login">Have any issue to login? <span class="login-click">Click here</span></div>			
+
+		  </div>
+	</div>
+</div>
+{% endblock %}

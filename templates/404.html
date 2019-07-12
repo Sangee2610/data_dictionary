@@ -1,0 +1,17 @@
+{% extends "appbuilder/base.html" %}
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/page-404.css')}}">
+{% endblock %}
+{% block navbar %}
+{% endblock %}
+{% block content %}
+<div class="block-center text-center">
+    <!-- <img src="/static/images/404.png" /> -->
+    <h2>We're sorry...</h2>
+    <p>This page has drowned in the datalake</p>
+    <a href="/" class="btn btn-back">Go Back Home</a>
+</div>
+{% endblock %}
+
+

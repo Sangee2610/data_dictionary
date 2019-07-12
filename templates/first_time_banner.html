@@ -1,0 +1,98 @@
+{% extends "appbuilder/base.html" %}
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='styles/welcome.css')}}">
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+
+ <div class="carousel-skip">
+    <p class="carosel-show">
+      <a href="/new_user/1">Don't show it again</a>
+    </p>
+  <p><a href="/data_set/list_new"><strong>X</strong> Skip</a></p>
+</div>
+ <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+      <li data-target="#myCarousel" data-slide-to="3"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+
+      <div class="item welcome active">
+        
+        <div class="carousel-caption">
+            <div class="caption-text">
+              <h3>Welcome</h3>
+              <h5>To the Data Dictionary.</h5> 
+             <p>Enjoy easy access to the datasets - easiest way to reach your customers and improve performance.</p>
+            </div>
+        </div>
+      </div>
+
+       <div class="item discover">
+     
+        <div class="carousel-caption">
+            <div class="caption-text">
+               <h3>Discover</h3>
+                <p>Where sales are being made. Areas with opportunities for investment or review. Which business development activities are being most successful.</p>
+              </div>
+            </div>
+      </div>
+     
+      <div class="item engage">
+       
+        <div class="carousel-caption">
+          <div class="caption-text">
+          <h3>Engage teams</h3>
+          <h5>and get our support</h5>
+          <p>Engage and reward teams for their part in the purchase cycle. Work with what you know from the past to scenario plan for growth in the future.</p>
+           </div> 
+        </div>
+      </div> 
+    
+     <div class="item enjoy">
+      
+        <div class="carousel-caption">
+            <div class="caption-text">
+          <h3>Enjoy Results</h3>
+          <p>Challenge teams on plans and measure results across the business. Appropriately reward staff for their influence in the buying journey. Reduce financial risk by modelling plannes strategies.</p>
+        </div>
+        </div> 
+      </div>   
+    </div>
+
+   
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+      <!-- <span class="glyphicon glyphicon-chevron-left"></span> -->
+      <i class="fa fa-angle-left" aria-hidden="true"></i>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+      <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+      <i class="fa fa-angle-right" aria-hidden="true"></i>
+    </a>
+  </div>
+
+
+{% endblock %}
+{% block tail_js %}
+{{super()}}
+<script>
+    if (navigator.platform === 'MacIntel' || navigator.platform === 'MacPPC') {
+      $('#myCarousel').css('margin-top', '10%');
+    }
+    $('.right.carousel-control').on('click', function(e){
+      if($('.enjoy').hasClass('active')){
+        window.location.href='/data_set/list_new'
+      }
+    });
+  </script>
+{% endblock %}
